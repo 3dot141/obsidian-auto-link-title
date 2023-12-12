@@ -1,13 +1,14 @@
 import { CheckIf } from "checkif"
 import { EditorExtensions } from "editor-enhancements"
 import { Editor, Plugin } from "obsidian"
-import getPageTitle from "scraper"
+import getPageTitle, {TitleExtractorManager} from "scraper"
 import {
   AutoLinkTitleSettingTab,
   AutoLinkTitleSettings,
   DEFAULT_SETTINGS,
 } from "./settings"
 import { randomBytes } from 'crypto'
+import * as url from "url";
 
 interface PasteFunction {
   (this: HTMLElement, ev: ClipboardEvent): void;
@@ -149,9 +150,19 @@ export default class AutoLinkTitle extends Plugin {
     }
 
     let selectedText = (EditorExtensions.getSelectedText(editor) || "").trim();
-    if (selectedText && !this.settings.shouldReplaceSelection) {
-      // If there is selected text and shouldReplaceSelection is false, do not fetch title
-      return;
+    if (selectedText) {
+      if (this.settings.shouldReplaceSelection) {
+        if (this.settings.addLink) {
+          // We've decided to handle the paste, stop propagation to the default handler.
+          clipboard.stopPropagation();
+          clipboard.preventDefault();
+
+          this.addLinkForSelection(selectedText, editor, clipboardText);
+          return;
+        }
+      } else {
+        return;
+      }
     }
 
     // We've decided to handle the paste, stop propagation to the default handler.
@@ -175,6 +186,12 @@ export default class AutoLinkTitle extends Plugin {
     await this.loadSettings();
     this.blacklist = this.settings.websiteBlacklist.split(/,|\n/).map(s => s.trim()).filter(s => s.length > 0)
     return this.blacklist.some(site => url.contains(site))
+  }
+
+  async addLinkForSelection(selection: string, editor: Editor, url: string): Promise<void> {
+
+    // Instantly paste so you don't wonder if paste is broken
+    editor.replaceSelection(`[${selection}](${url})`);
   }
 
   async convertUrlToTitledLink(editor: Editor, url: string): Promise<void> {
@@ -218,7 +235,8 @@ export default class AutoLinkTitle extends Plugin {
 
   async fetchUrlTitle(url: string): Promise<string> {
     try {
-      const title = await getPageTitle(url);
+      const titleExtractorManager = new TitleExtractorManager(this.settings.customRules)
+      const title = await titleExtractorManager.get(url);
       return title.replace(/(\r\n|\n|\r)/gm, "").trim();
     } catch (error) {
       console.error(error)
