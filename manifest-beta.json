@@ -1,9 +1,9 @@
 {
-  "id": "obsidian-auto-link-title",
-  "name": "Auto Link Title",
+  "id": "obsidian-my-auto-link-title",
+  "name": "My Auto Link Title",
   "version": "0.1",
   "minAppVersion": "0.12.17",
-  "description": "This plugin automatically fetches the titles of links from the web",
+  "description": "This plugin automatically fetches the titles of links from the web, the fork of Auto Link Title",
   "author": "Yes365",
   "authorUrl": "https://github.com/3dot141",
   "isDesktopOnly": false
