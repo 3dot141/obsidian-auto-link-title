@@ -1,5 +1,5 @@
 import { Editor } from "obsidian";
-import { DEFAULT_SETTINGS } from 'settings';
+import { DEFAULT_SETTINGS } from 'src/settings';
 
 export class CheckIf {
   public static isMarkdownLinkAlready(editor: Editor): boolean {

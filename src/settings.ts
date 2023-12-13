@@ -1,4 +1,4 @@
-import AutoLinkTitle from "main";
+import AutoLinkTitle from "src/main";
 import {App, PluginSettingTab, Setting, TextAreaComponent} from "obsidian";
 
 export interface AutoLinkTitleSettings {

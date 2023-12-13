@@ -1,7 +1,7 @@
-import { CheckIf } from "checkif"
-import { EditorExtensions } from "editor-enhancements"
+import { CheckIf } from "src/checkif"
+import { EditorExtensions } from "src/editor-enhancements"
 import { Editor, Plugin } from "obsidian"
-import getPageTitle, {TitleExtractorManager} from "scraper"
+import getPageTitle, {TitleExtractorManager} from "src/scraper"
 import {
   AutoLinkTitleSettingTab,
   AutoLinkTitleSettings,
