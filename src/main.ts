@@ -348,7 +348,9 @@ export default class AutoLinkTitle extends Plugin {
         console.log("Title via Link Preview failed, falling back to scraper");
         if (this.settings.useNewScraper) {
           console.log("Using new scraper");
-          title = await getPageTitle(url);
+          const titleExtractorManager = new TitleExtractorManager(this.settings.customRules)
+          title = await titleExtractorManager.get(url);
+          title = title.replace(/(\r\n|\n|\r)/gm, "").trim();
         } else {
           console.log("Using old scraper");
           title = await getElectronPageTitle(url);
@@ -363,17 +365,6 @@ export default class AutoLinkTitle extends Plugin {
     } catch (error) {
       console.error(error);
       return "Error fetching title";
-    }
-  }
-
-  async fetchUrlTitle(url: string): Promise<string> {
-    try {
-      const titleExtractorManager = new TitleExtractorManager(this.settings.customRules)
-      const title = await titleExtractorManager.get(url);
-      return title.replace(/(\r\n|\n|\r)/gm, "").trim();
-    } catch (error) {
-      console.error(error)
-      return 'Error fetching title'
     }
   }
 
